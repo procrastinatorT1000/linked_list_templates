@@ -35,16 +35,15 @@ int main(void)
 	dotB.y = 5000;
 	dotB.z = -100000;
 
-	LinkedList Llist;
+	LinkedList <Coordinate> Llist;
 
-	Llist.push(&dotA, sizeof(dotA));
-	Llist.push(&dotB, sizeof(dotB));
+	Llist.push(dotA);
+	Llist.push(dotB);
 	Llist.printLinkedList();
 
 
 	Coordinate dotC;
-	int a = Llist.pop(&dotC);
-	printf("%d\n", a);
+	dotC = Llist.pop();
 	printf("dotC: x=%d y=%d z=%d\n", dotC.x, dotC.y, dotC.z);
 	Llist.printLinkedList();
 

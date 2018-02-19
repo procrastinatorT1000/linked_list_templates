@@ -12,30 +12,27 @@
 #include <memory.h>
 #include <cstddef>
 
+template< class T >
 class Elemen_c
 {
-	void *ptr;
-	size_t size;
+	T *ptr;
 public:
-	Elemen_c(void * data, size_t sz)
+	Elemen_c(T data)
 	{
-		ptr = new char[sz];
-		memcpy(ptr, data, sz);
-		size = sz;
+		ptr = new T;
+		*ptr = data;
 	};
 	~Elemen_c()
 	{
-		delete (char *) ptr;
-		size = 0;
+		delete ptr;
 	};
-	size_t getElement(void *outPtr)
+	T getElement()
 	{
-		memcpy(outPtr, ptr, size);
-		return size;
+		return *ptr;
 	};
 	void printElement()
 	{
-		for(size_t i = 0; i < size; i++)
+		for(size_t i = 0; i < sizeof(T); i++)
 		{
 			printf("%X", ((uint8_t*)ptr)[i]);
 		}
@@ -43,14 +40,15 @@ public:
 	};
 };
 
+template< class T >
 class Node_c
 {
-	Elemen_c *elementPtr;
-	Node_c *next;
+	Elemen_c < T > *elementPtr;
+	Node_c < T > *next;
 public:
-	Node_c(void *data, size_t sz)
+	Node_c(T data)
 	{
-		elementPtr = new Elemen_c(data, sz);
+		elementPtr = new Elemen_c < T >(data);
 		next = NULL;
 	};
 	~Node_c()
@@ -58,17 +56,17 @@ public:
 		delete elementPtr;
 		next = NULL;
 	};
-	void setNextNode(Node_c *nextNode)
+	void setNextNode(Node_c < T > *nextNode)
 	{
 		next = nextNode;
 	};
-	Node_c *getNextNode()
+	Node_c < T > *getNextNode()
 	{
 		return next;
 	};
-	size_t getNodeElement(void *outPtr)
+	T getNodeElement()
 	{
-		return elementPtr->getElement(outPtr);
+		return elementPtr->getElement();
 	};
 	void printElement()
 	{
@@ -76,9 +74,10 @@ public:
 	};
 };
 
+template< class T >
 class LinkedList{
-	Node_c *first;
-	Node_c *head;
+	Node_c < T > *first;
+	Node_c < T > *head;
 public:
 	LinkedList()
 	{
@@ -89,16 +88,16 @@ public:
 	{
 		while(head)
 		{
-			Node_c *prev = head;
+			Node_c < T > *prev = head;
 			head = head->getNextNode();
 			delete prev;
 		}
 	};
-	void push(void *elem, size_t elemSize);
-	size_t pop(void *elemPtr);
+	void push(T elem);
+	T pop();
 	void printLinkedList()
 	{
-		Node_c *printHead = head;
+		Node_c < T > *printHead = head;
 
 		if(printHead == NULL)
 		{
@@ -112,5 +111,38 @@ public:
 		}
 	};
 };
+
+template< class T >
+void LinkedList < T >::push(T elem)
+{
+	Node_c < T > *tmp = new Node_c < T > (elem);
+
+	if(head == NULL)
+	{
+		head = tmp;
+	}
+	else
+	{
+	    tmp->setNextNode(head);
+	    head = tmp;
+	}
+
+	if(first == NULL)
+	{
+		first = head;
+	}
+}
+
+template< class T >
+T LinkedList < T >::pop()
+{
+	T elemSize = head->getNodeElement();
+
+	Node_c < T > *prev = head;
+	head = head->getNextNode();
+	delete prev;
+
+	return elemSize;
+}
 
 #endif /* LINKED_LIST_HPP_ */
